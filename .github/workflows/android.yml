@@ -14,9 +14,11 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Download SDL3 Android Template
+      - name: Download Lightweight SDL3 Template
         run: |
-          git clone --depth=1 https://github.com
+          curl -L https://github.com -o sdl.zip
+          unzip -q sdl.zip
+          mv SDL-main SDL
           mkdir -p SDL/android-project/app/src/main/jni/src
           cp reallyfinalfallball294.cpp SDL/android-project/app/src/main/jni/src/main.cpp
 
