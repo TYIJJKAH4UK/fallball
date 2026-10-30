@@ -357,6 +357,7 @@ DrawNewRecordText(renderer, (float)screenW / 2.0f - (textWidth / 2.0f), screenH 
 }
 }
 SDL_RenderPresent(renderer);
+         
 SDL_Delay(8);
 }
 if (audioStream) {
