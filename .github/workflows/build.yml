@@ -1,0 +1,33 @@
+name: Build Android APK
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Download SDL3 Android Template
+        run: |
+          git clone https://github.com --depth=1
+          mkdir -p SDL/android-project/app/src/main/jni/src
+          cp reallyfinalfallball294.cpp SDL/android-project/app/src/main/jni/src/main.cpp
+
+      - name: Build with Gradle
+        run: |
+          cd SDL/android-project
+          chmod +x gradlew
+          ./gradlew assembleDebug
+          
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-apk
+          path: SDL/android-project/app/build/outputs/apk/debug/app-debug.apk
