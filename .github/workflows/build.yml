@@ -17,22 +17,28 @@ jobs:
           ref: release-2.30.x
           path: SDL
 
+      - name: Setup Java Environment
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
       - name: Prepare C++ Source File
         run: |
-          sudo mkdir -p SDL/android-project/app/src/main/jni/src
-          sudo cp main-repo/reallyfinalfallball294.cpp SDL/android-project/app/src/main/jni/src/main.cpp
-          sudo chmod -R 777 SDL
-          
-      - name: Build APK inside Container
-        uses: docker://mobiledevops/android-sdk-image:34.0.0
-        with:
-          args: >
-            bash -c "
-            cd SDL/android-project &&
-            echo 'ndk.dir=/opt/android-sdk-linux/ndk/28.2.13676358' > local.properties &&
-            export JAVA_HOME=/opt/android-studio/jbr &&
-            bash gradlew assembleDebug
-            "
+          mkdir -p SDL/android-project/app/src/main/jni/src
+          cp main-repo/reallyfinalfallball294.cpp SDL/android-project/app/src/main/jni/src/main.cpp
+
+      - name: Configure Android Project
+        run: |
+          cd SDL/android-project
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "ndk.dir=$ANDROID_NDK_LATEST_HOME" >> local.properties
+
+      - name: Compile APK via Gradle
+        run: |
+          cd SDL/android-project
+          chmod +x gradlew
+          ./gradlew assembleDebug
           
       - name: Export Ready APK
         uses: actions/upload-artifact@v4
