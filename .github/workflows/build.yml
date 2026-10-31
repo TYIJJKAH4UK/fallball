@@ -10,13 +10,14 @@ jobs:
         with:
           path: main-repo
 
-      - name: Checkout SDL3 Framework
+      - name: Checkout Stable SDL Framework
         uses: actions/checkout@v4
         with:
           repository: libsdl-org/SDL
+          ref: release-2.30.x
           path: SDL
 
-      - name: Grant Permissions and Build APK
+      - name: Prepare C++ Source File
         run: |
           sudo mkdir -p SDL/android-project/app/src/main/jni/src
           sudo cp main-repo/reallyfinalfallball294.cpp SDL/android-project/app/src/main/jni/src/main.cpp
@@ -28,6 +29,7 @@ jobs:
           args: >
             bash -c "
             cd SDL/android-project &&
+            echo 'ndk.dir=/opt/android-sdk-linux/ndk/28.2.13676358' > local.properties &&
             bash gradlew assembleDebug
             "
           
