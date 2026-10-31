@@ -28,8 +28,7 @@ jobs:
           args: >
             bash -c "
             cd SDL/android-project &&
-            chmod +x gradlew &&
-            ./gradlew assembleDebug
+            bash gradlew assembleDebug
             "
           
       - name: Export Ready APK
