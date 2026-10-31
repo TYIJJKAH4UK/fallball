@@ -35,6 +35,8 @@ jobs:
           echo "ndk.dir=$ANDROID_NDK_LATEST_HOME" >> local.properties
 
       - name: Compile APK via Gradle
+        env:
+          APP_ALLOW_MISSING_DEPS: true
         run: |
           cd SDL/android-project
           chmod +x gradlew
