@@ -4,28 +4,27 @@ on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: mobiledevops/android-sdk-image:34.0.0
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
 
-      - name: Fetch Clean SDL3 Framework
-        run: |
-          curl -L "https://github.com" -o framework.zip
-          unzip -q framework.zip
-          mv SDL-* SDL
-          mkdir -p SDL/android-project/app/src/main/jni/src
-          cp reallyfinalfallball294.cpp SDL/android-project/app/src/main/jni/src/main.cpp
-
-      - name: Compile APK via Gradle
-        run: |
-          cd SDL/android-project
-          chmod +x gradlew
-          ./gradlew assembleDebug
+      - name: Fetch Framework and Build APK inside Container
+        uses: docker://mobiledevops/android-sdk-image:34.0.0
+        with:
+          args: >
+            bash -c "
+            curl -L \"https://github.com\" -o framework.zip &&
+            unzip -q framework.zip &&
+            mv SDL-* SDL &&
+            mkdir -p SDL/android-project/app/src/main/jni/src &&
+            cp reallyfinalfallball294.cpp SDL/android-project/app/src/main/jni/src/main.cpp &&
+            cd SDL/android-project &&
+            chmod +x gradlew &&
+            ./gradlew assembleDebug
+            "
           
       - name: Export Ready APK
         uses: actions/upload-artifact@v4
         with:
           name: game-apk
-          path: /__w/fallball/fallball/SDL/android-project/app/build/outputs/apk/debug/app-debug.apk
+          path: SDL/android-project/app/build/outputs/apk/debug/app-debug.apk
