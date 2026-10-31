@@ -7,17 +7,23 @@ jobs:
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v4
+        with:
+          path: main-repo
 
-      - name: Fetch Framework and Build APK inside Container
+      - name: Checkout SDL3 Framework
+        uses: actions/checkout@v4
+        with:
+          repository: libsdl-org/SDL
+          path: SDL
+          depth: 1
+
+      - name: Build APK inside Container
         uses: docker://mobiledevops/android-sdk-image:34.0.0
         with:
           args: >
             bash -c "
-            curl -L \"https://github.com\" -o framework.zip &&
-            unzip -q framework.zip &&
-            mv SDL-* SDL &&
             mkdir -p SDL/android-project/app/src/main/jni/src &&
-            cp reallyfinalfallball294.cpp SDL/android-project/app/src/main/jni/src/main.cpp &&
+            cp main-repo/reallyfinalfallball294.cpp SDL/android-project/app/src/main/jni/src/main.cpp &&
             cd SDL/android-project &&
             chmod +x gradlew &&
             ./gradlew assembleDebug
